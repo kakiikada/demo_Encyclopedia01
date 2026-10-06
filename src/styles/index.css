@@ -10,7 +10,7 @@
   --inner_m: 0.5rem;
   --inner_s: 0.25rem;
 
-  font-family: sans-serif;
+  font-family: "M PLUS Rounded 1c", sans-serif;
   color: var(--color_text);
   background-color: var(--color_bg);
   -moz-osx-font-smoothing: grayscale;
