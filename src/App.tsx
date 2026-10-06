@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from './assets/vite.svg'
 import heroImg from './assets/hero.png'
@@ -11,14 +11,72 @@ function App() {
   const [isBookOpen, setIsBookOpen] = useState(false)
   // 魚のクリック処理
   const [fishHistory, setFishHistory] = useState<string[]>([]) //履歴
-  const [fishCollection, setFishCollection] = useState<Record<string, number>>({}) //図鑑
+
+  const [fishCollection, setFishCollection] = //図鑑
+  useState<Record<string, number>>(() => {
+    const saved = localStorage.getItem("fishCollection")
+    return saved ? JSON.parse(saved) : {}
+  })
+  // 図鑑のローカルストレージ保存
+  useEffect(() => {
+  localStorage.setItem(
+    "fishCollection",
+    JSON.stringify(fishCollection)
+  )
+}, [fishCollection])
+
   const fishList = ["アジ", "マグロ", "タイ"]
   // ランダムに５匹を選出
   const [tankFish, setTankFish] = useState(() =>
-  Array.from({ length: 5 }, () =>
-    fishList[Math.floor(Math.random() * fishList.length)]
+    Array.from({ length: 5 }, () =>
+      fishList[Math.floor(Math.random() * fishList.length)]
+    )
   )
-)
+  // 標示管理
+  const [fishVisible, setFishVisible] = useState([
+    true,
+    true,
+    true,
+    true,
+    true
+  ])
+  // 魚の表示・登録の関数
+  const catchFish = (index: number) => {
+    const fish = tankFish[index]
+
+    // 履歴に追加
+    setFishHistory([...fishHistory, fish].slice(-6))
+
+    // 図鑑に追加
+    setFishCollection({
+      ...fishCollection,
+      [fish]: (fishCollection[fish] || 0) + 1
+    })
+
+    // 魚を非表示
+    setFishVisible(prev =>
+      prev.map((visible, i) =>
+        i === index ? false : visible
+      )
+    )
+    // 数秒後に再表示
+    setTimeout(() => {
+
+      const newFish =
+      fishList[Math.floor(Math.random() * fishList.length)]
+      setTankFish(prev =>
+        prev.map((fish, i) =>
+          i === index ? newFish : fish
+        )
+      )
+      setFishVisible(prev =>
+        prev.map((visible, i) =>
+          i === index ? true : visible
+        )
+      )
+
+    }, 6000) //60秒
+  }
 
   return (
     <>
@@ -59,36 +117,36 @@ function App() {
                 <div className="monitor">
                   {/* 魚 */}
                   <div className="monitor_feald">
+                    
+                    {fishVisible[0] && (
                     <button className="fidh-1"
-                      onClick={() => {
-                        setFishHistory([...fishHistory, tankFish[0]].slice(-6))
-                        setFishCollection({...fishCollection,  [tankFish[0]]: (fishCollection[tankFish[0]] || 0) + 1})
-                      }}
+                      onClick={() => catchFish(0)}
                     >{tankFish[0]}</button>
+                    )}
+                    
+                    {fishVisible[1] && (
                     <button className="fidh-2"
-                      onClick={() => {
-                        setFishHistory([...fishHistory, tankFish[1]].slice(-6))
-                        setFishCollection({...fishCollection,  [tankFish[1]]: (fishCollection[tankFish[1]] || 0) + 1})
-                      }}
+                      onClick={() => catchFish(1)}
                     >{tankFish[1]}</button>
+                    )}
+                    
+                    {fishVisible[2] && (
                     <button className="fidh-3"
-                      onClick={() => {
-                        setFishHistory([...fishHistory, tankFish[2]].slice(-6))
-                        setFishCollection({...fishCollection,  [tankFish[2]]: (fishCollection[tankFish[2]] || 0) + 1})
-                      }}
+                      onClick={() => catchFish(2)}
                     >{tankFish[2]}</button>
+                    )}
+                    
+                    {fishVisible[3] && (
                     <button className="fidh-4"
-                      onClick={() => {
-                        setFishHistory([...fishHistory, tankFish[3]].slice(-6))
-                        setFishCollection({...fishCollection,  [tankFish[3]]: (fishCollection[tankFish[3]] || 0) + 1})
-                      }}
+                      onClick={() => catchFish(3)}
                     >{tankFish[3]}</button>
+                    )}
+                    
+                    {fishVisible[4] && (
                     <button className="fidh-5"
-                      onClick={() => {
-                        setFishHistory([...fishHistory, tankFish[4]].slice(-6))
-                        setFishCollection({...fishCollection,  [tankFish[4]]: (fishCollection[tankFish[4]] || 0) + 1})
-                      }}
+                      onClick={() => catchFish(4)}
                     >{tankFish[4]}</button>
+                    )}
                   </div>
                   {/* 背景 */}
                   <div className="monitor_bg">
