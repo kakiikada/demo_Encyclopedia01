@@ -1,5 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import no_image from "./assets/no_image.png"
+import no_icon from "./assets/no_icon.png"
+import fish_demo from "./assets/fish_demo.png"
 import './styles/App.css'
 
 function App() {
@@ -16,6 +18,8 @@ function App() {
     const saved = localStorage.getItem("fishCollection")
     return saved ? JSON.parse(saved) : {}
   })
+  // 図鑑のページネーション
+  const [bookPage, setBookPage] = useState<number | null>(null)
 
   // 図鑑のローカルストレージ保存
   useEffect(() => {
@@ -36,7 +40,7 @@ function App() {
       scientificName: "Amphiprion ocellaris",
       family: "カクレクマノミの分類",
       habitat: "カクレクマノミの生息地",
-      // image: clownfish,
+      // image: betta,
     },
     {
       name: "ベタ",
@@ -66,11 +70,7 @@ function App() {
       habitat: "琉球諸島からオーストラリアにかけての太平洋",
       // image: SynchiropusSplendidus,
     },
-    // 以下3匹も追加
   ]
-
-
-
 
   const [tankFish, setTankFish] = useState(() =>
     Array.from({ length: 5 }, () =>
@@ -292,6 +292,7 @@ function App() {
 
       }, 8000) //クリック後復活までの時間
     }, 1000) //クリックアニメーションの時間
+    
   }
 
   return (
@@ -343,7 +344,8 @@ function App() {
                       <button className="fish-1"
                         onClick={() => catchFish(0)}
                       >{tankFish[0]}
-                        <span class="clickAnimation"></span>
+                        <img src={fish_demo} alt="" />
+                        <span className="clickAnimation"></span>
                       </button>
                     </div>
                     )}
@@ -357,7 +359,8 @@ function App() {
                       <button className="fish-2"
                         onClick={() => catchFish(1)}
                       >{tankFish[1]}
-                        <span class="clickAnimation"></span>
+                        <img src={fish_demo} alt="" />
+                        <span className="clickAnimation"></span>
                       </button>
                     </div>
                     )}
@@ -371,7 +374,8 @@ function App() {
                       <button className="fish-3"
                         onClick={() => catchFish(2)}
                       >{tankFish[2]}
-                        <span class="clickAnimation"></span>
+                        <img src={fish_demo} alt="" />
+                        <span className="clickAnimation"></span>
                       </button>
                     </div>
                     )}
@@ -385,7 +389,8 @@ function App() {
                       <button className="fish-4"
                         onClick={() => catchFish(3)}
                       >{tankFish[3]}
-                        <span class="clickAnimation"></span>
+                        <img src={fish_demo} alt="" />
+                        <span className="clickAnimation"></span>
                       </button>
                     </div>
                     )}
@@ -399,7 +404,8 @@ function App() {
                       <button className="fish-5"
                         onClick={() => catchFish(4)}
                       >{tankFish[4]}
-                        <span class="clickAnimation"></span>
+                        <img src={fish_demo} alt="" />
+                        <span className="clickAnimation"></span>
                       </button>
                     </div>
                     )}
@@ -445,23 +451,27 @@ function App() {
                     <div className="menuFeald" onClick={(e) => e.stopPropagation()}>
                       <p className="menuFeald_title">Encyclopedia</p>
                       <ul className="menuFeald_list">
-                          {fishList.map((fish) =>
+                          {fishList.map((fish, index) =>
                             fishCollection[fish] >= 1 ? (
 
-                              <li key={fish}><button>{fish}{fishCollection[fish]}匹</button></li>
+                              <li key={fish}><button
+                                onClick={() => {
+                                  setBookPage(index)
+                                }}
+                              >{fish}{fishCollection[fish]}匹</button></li>
                             ):(
-                              <li key={fish}><button>未取得</button></li>
+                              <li key={fish}><div><img src={no_icon} alt="" /></div></li>
                             )
                           )}
                       </ul>
                       <div className="menuFeald_note">
-                        <div className="menuFeald_note_img"><img src={fishData[0].image} alt={fishData[0].name} /></div>
+                        <div className="menuFeald_note_img"><img src={bookPage === null ? no_image : fishData[bookPage].image} alt={bookPage === null ? "---" : fishData[bookPage].name} /></div>
                         <ul className="menuFeald_note_list">
-                          <li><h2>名前：{fishData[0].name}</h2></li>
-                          <li>学名：{fishData[0].scientificName}</li>
-                          <li>分類：{fishData[0].family}</li>
-                          <li>生息地：{fishData[0].habitat}</li>
-                          <li>入手数：{fishCollection[fishData[0].name] || 0}匹</li>
+                          <li><h2>名前：{bookPage === null ? "---" : fishData[bookPage].name}</h2></li>
+                          <li>学名：{bookPage === null ? "---" : fishData[bookPage].scientificName}</li>
+                          <li>分類：{bookPage === null ? "---" : fishData[bookPage].family}</li>
+                          <li>生息地：{bookPage === null ? "---" : fishData[bookPage].habitat}</li>
+                          <li>入手数：{bookPage === null ? "---" : fishCollection[fishData[bookPage].name] || 0}匹</li>
                         </ul>
                       </div>
                     </div>
