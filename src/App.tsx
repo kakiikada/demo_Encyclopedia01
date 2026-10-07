@@ -1,7 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
+import no_image from "./assets/no_image.png"
 import './styles/App.css'
 
 function App() {
@@ -11,12 +9,14 @@ function App() {
   const [isBookOpen, setIsBookOpen] = useState(false)
   // 魚のクリック処理
   const [fishHistory, setFishHistory] = useState<string[]>([]) //履歴
+  const [historyLeaving, setHistoryLeaving] = useState(false) //履歴アニメーション
 
   const [fishCollection, setFishCollection] = //図鑑
   useState<Record<string, number>>(() => {
     const saved = localStorage.getItem("fishCollection")
     return saved ? JSON.parse(saved) : {}
   })
+
   // 図鑑のローカルストレージ保存
   useEffect(() => {
     localStorage.setItem(
@@ -25,8 +25,53 @@ function App() {
     )
   }, [fishCollection])
 
-  const fishList = ["アジ", "マグロ", "タイ"]
+  const fishList = ["カクレクマノミ", "ベタ", "エンゼルフィッシュ", "ハリセンボン", "ニシキテグリ"]
   // ランダムに５匹を選出
+
+
+ // 魚の仮データ
+  const fishData = [
+    {
+      name: "カクレクマノミ",
+      scientificName: "Amphiprion ocellaris",
+      family: "カクレクマノミの分類",
+      habitat: "カクレクマノミの生息地",
+      // image: clownfish,
+    },
+    {
+      name: "ベタ",
+      scientificName: "Betta splendens",
+      family: "ベタの分類",
+      habitat: "ベタの生息地",
+      // image: betta,
+    },
+    {
+      name: "エンゼルフィッシュ",
+      scientificName: "Pterophyllum",
+      family: "エンゼルフィッシュの分類",
+      habitat: "エンゼルフィッシュの生息地",
+      // image: betta,
+    },
+    {
+      name: "ハリセンボン",
+      scientificName: "Diodon holocanthus",
+      family: "フグ目ハリセンボン科ハリセンボン属",
+      habitat: "ハリセンボンの生息地",
+      // image: betta,
+    },
+    {
+      name: "ニシキテグリ",
+      scientificName: "Synchiropus splendidus",
+      family: "ネズッポ科コウワンテグリ属ニシキテグリ",
+      habitat: "琉球諸島からオーストラリアにかけての太平洋",
+      // image: SynchiropusSplendidus,
+    },
+    // 以下3匹も追加
+  ]
+
+
+
+
   const [tankFish, setTankFish] = useState(() =>
     Array.from({ length: 5 }, () =>
       fishList[Math.floor(Math.random() * fishList.length)]
@@ -167,6 +212,23 @@ function App() {
     
     // 履歴に追加
     setFishHistory([...fishHistory, fish].slice(-6))
+    setTimeout(() => {
+
+      // 一番古い履歴を消すアニメーション開始
+      setHistoryLeaving(true)
+
+      // アニメーション終了後に実際に削除
+      setTimeout(() => {
+        setFishHistory(prev => {
+          const newHistory = [...prev]
+          newHistory.shift()
+          return newHistory
+        })
+
+        setHistoryLeaving(false)
+      }, 1000) //履歴削除アニメーション
+
+    }, 6000) //履歴削除時間
     
     // 図鑑に追加
     setFishCollection({
@@ -174,63 +236,63 @@ function App() {
       [fish]: (fishCollection[fish] || 0) + 1
     })
 
-  // クリックアニメーション開始
-  setFishCatching(prev =>
-    prev.map((catching, i) =>
-      i === index ? true : catching
-    )
-  )
-
-  // アニメーション終了後に完全に消す
-  setTimeout(() => {
-    setFishVisible(prev =>
-      prev.map((visible, i) =>
-        i === index ? false : visible
-      )
-    )
-    // クリックアニメーション初期化
+    // クリックアニメーション開始
     setFishCatching(prev =>
       prev.map((catching, i) =>
-        i === index ? false : catching
+        i === index ? true : catching
       )
     )
 
-    // 完全に消えてから10秒後に復活
+    // アニメーション終了後に完全に消す
     setTimeout(() => {
-      const newFish = fishList[Math.floor(Math.random() * fishList.length)]
-      // 新しい魚をセット
-      setTankFish(prev =>
-        prev.map((fish, i) =>
-          i === index ? newFish : fish
-        )
-      )
-      // 復活のアニメーション
-      setFishRespawning(prev =>
-        prev.map((respawning, i) =>
-          i === index ? true : respawning
-        )
-      )
-      // 魚の表示
       setFishVisible(prev =>
         prev.map((visible, i) =>
-          i === index ? true : visible
+          i === index ? false : visible
         )
       )
-      // 復活アニメーションのリセット
-      setTimeout(() => {
-        setFishRespawning(prev =>
-          prev.map((respawning, i) =>
-            i === index ? false : respawning
+      // クリックアニメーション初期化
+      setFishCatching(prev =>
+        prev.map((catching, i) =>
+            i === index ? false : catching
           )
         )
-      }, 1000) //クリック後に復活までのアニメーションの時間
 
-      // 復活したので30秒タイマー開始
-      startAutoHideTimer(index)
+      // 完全に消えてから10秒後に復活
+      setTimeout(() => {
+        const newFish = fishList[Math.floor(Math.random() * fishList.length)]
+        // 新しい魚をセット
+        setTankFish(prev =>
+          prev.map((fish, i) =>
+            i === index ? newFish : fish
+          )
+        )
+        // 復活のアニメーション
+        setFishRespawning(prev =>
+          prev.map((respawning, i) =>
+            i === index ? true : respawning
+          )
+        )
+        // 魚の表示
+        setFishVisible(prev =>
+          prev.map((visible, i) =>
+            i === index ? true : visible
+          )
+        )
+        // 復活アニメーションのリセット
+        setTimeout(() => {
+          setFishRespawning(prev =>
+            prev.map((respawning, i) =>
+              i === index ? false : respawning
+            )
+          )
+        }, 1000) //クリック後に復活までのアニメーションの時間
 
-    }, 8000) //クリック後復活までの時間
-  }, 1000) //クリックアニメーションの時間
-}
+        // 復活したので30秒タイマー開始
+        startAutoHideTimer(index)
+
+      }, 8000) //クリック後復活までの時間
+    }, 1000) //クリックアニメーションの時間
+  }
 
   return (
     <>
@@ -358,9 +420,13 @@ function App() {
                   <p className="history_title">入手</p>
                   <ul className="history_list">
                   {fishHistory.map((fish, index) => (
-                    <li key={index}><button>{fish}</button></li>
+                    <li
+                      key={index}
+                      className={index === 0 && historyLeaving ? "history-leaving" : ""}
+                    >
+                      <button>{fish}</button>
+                    </li>
                   ))}
-
                   </ul>
                 </div>
               </section>
@@ -374,29 +440,38 @@ function App() {
                   ></button>
                   <div className=
                   {isBookOpen ? ('menu_feald active'):('menu_feald')}
+                  onClick={() => setIsBookOpen(!isBookOpen)}
                   >
-                    <p className="menu_title">Encyclopedia</p>
-                    <ul className="menu_list">
-                        {fishList.map((fish) =>
-                          fishCollection[fish] >= 1 ? (
+                    <div className="menuFeald" onClick={(e) => e.stopPropagation()}>
+                      <p className="menuFeald_title">Encyclopedia</p>
+                      <ul className="menuFeald_list">
+                          {fishList.map((fish) =>
+                            fishCollection[fish] >= 1 ? (
 
-                            <li key={fish}><button>{fish}{fishCollection[fish]}匹</button></li>
-                          ):(
-                            <li key={fish}><button>未取得</button></li>
-                          )
-                        )}
-                    </ul>
+                              <li key={fish}><button>{fish}{fishCollection[fish]}匹</button></li>
+                            ):(
+                              <li key={fish}><button>未取得</button></li>
+                            )
+                          )}
+                      </ul>
+                      <div className="menuFeald_note">
+                        <div className="menuFeald_note_img"><img src={fishData[0].image} alt={fishData[0].name} /></div>
+                        <ul className="menuFeald_note_list">
+                          <li><h2>名前：{fishData[0].name}</h2></li>
+                          <li>学名：{fishData[0].scientificName}</li>
+                          <li>分類：{fishData[0].family}</li>
+                          <li>生息地：{fishData[0].habitat}</li>
+                          <li>入手数：{fishCollection[fishData[0].name] || 0}匹</li>
+                        </ul>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </section>
             </div>
           </div>
         </main>
-        
-
       </section>
-
-
     </>
   )
 }
