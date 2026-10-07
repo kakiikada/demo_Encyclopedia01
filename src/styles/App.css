@@ -187,34 +187,35 @@
     }
   }
 }
-.fidh-1, .fidh-2, .fidh-3, .fidh-4, .fidh-5 {
+/* 魚の動き・表示 */
+.fish-1, .fish-2, .fish-3, .fish-4, .fish-5 {
   position: absolute;
   height: 3rem;
   width: 6rem;
   background-color: #fff;
   border-right: 2px solid ;
 }
-.fidh-1 {
+.fish-1 {
   top: 20%;
   left: 5%;
   animation: fish1 60s infinite ease-out;
 }
-.fidh-2 {
+.fish-2 {
   top: 30%;
   right: 10%;
   animation: fish2 40s 1s infinite ease-out;
 }
-.fidh-3 {
+.fish-3 {
   top: 50%;
   left: 40%;
   animation: fish3 50s infinite ease-out;
 }
-.fidh-4 {
+.fish-4 {
   top: 70%;
   right: 15%;
   animation: fish4 30s 3s infinite ease-out;
 }
-.fidh-5 {
+.fish-5 {
   bottom: 6rem;
   left: 10%;
   animation: fish5 35s infinite ease-out;
@@ -410,5 +411,66 @@
   }
   100% {
     transform: rotate(0)
+  }
+}
+/* 消えるときのアニメーション */
+.fish-leaving {
+  animation: fishDisappear 1s forwards;
+}
+@keyframes fishDisappear {
+  from {
+    opacity: 1;
+  }
+  
+  to {
+    opacity: 0;
+  }
+}
+/* キャッチアクション */
+.fish-catching {
+  animation: fishDisappear .5s forwards;
+  .clickAnimation {
+    position: absolute;
+    text-align: center;
+    animation: fishclick 1s forwards;
+    display: inline-block;
+    height: 0.2rem;
+    width: 0.2rem;
+    left: calc(50% - 0.1rem);
+    top: calc(50% - 0.1rem);
+    border-radius: 50%;
+    border: 1px solid #fff;
+  }
+}
+@keyframes fishclick {
+  0% {
+    left: calc(50% - 0.1rem);
+    top: calc(50% - 0.1rem);
+    border: 1px solid #fff;
+    opacity: 1;
+  }
+  80% {
+    height: 4rem;
+    width: 4rem;
+    left: calc(50% - 2rem);
+    top: calc(50% - 2rem);
+    border: 1px solid #f00;
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+/* 復活アクション */
+.fish-respawning {
+  animation: fishEespawning 1s forwards;
+}
+@keyframes fishEespawning {
+  from {
+    opacity: 0;
+  }
+  
+  to {
+    opacity: 1;
   }
 }

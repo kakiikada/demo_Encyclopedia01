@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from './assets/vite.svg'
 import heroImg from './assets/hero.png'
@@ -19,11 +19,11 @@ function App() {
   })
   // 図鑑のローカルストレージ保存
   useEffect(() => {
-  localStorage.setItem(
-    "fishCollection",
-    JSON.stringify(fishCollection)
-  )
-}, [fishCollection])
+    localStorage.setItem(
+      "fishCollection",
+      JSON.stringify(fishCollection)
+    )
+  }, [fishCollection])
 
   const fishList = ["アジ", "マグロ", "タイ"]
   // ランダムに５匹を選出
@@ -33,6 +33,11 @@ function App() {
     )
   )
   // 標示管理
+  const timers = useRef<(number | undefined)[]>([])
+  const autoHideTimers = useRef<number[]>([])
+  const respawnTimers = useRef<number[]>([])
+  //自動管理
+    // 標示状態管理
   const [fishVisible, setFishVisible] = useState([
     true,
     true,
@@ -40,43 +45,192 @@ function App() {
     true,
     true
   ])
+  // 自動で消えるアニメーション
+  const [fishLeaving, setFishLeaving] = useState([
+    false,
+    false,
+    false,
+    false,
+    false
+  ])
+  // クリックアニメーション
+  const [fishCatching, setFishCatching] = useState([
+    false,
+    false,
+    false,
+    false,
+    false
+  ])
+  // 復活アニメーション
+  const [fishRespawning, setFishRespawning] = useState([
+    false,
+    false,
+    false,
+    false,
+    false
+  ])
+  // 自動削除・自動復活の関数
+  const startAutoHideTimer = (index: number) => {
+    autoHideTimers.current[index] = window.setTimeout(() => {
+      
+      // アニメーション開始
+      setFishLeaving(prev =>
+        prev.map((leaving, i) =>
+          i === index ? true : leaving
+        )
+      )
+      autoHideTimers.current[index] = window.setTimeout(() => {
+        // 消す処理
+        setFishVisible(prev =>
+          prev.map((visible, i) =>
+            i === index ? false : visible
+          )
+        )
+        // アニメーション終了
+        setFishLeaving(prev =>
+          prev.map((leaving, i) =>
+            i === index ? false : leaving
+          )
+        )
+
+        // 20秒後に復活
+        respawnTimers.current[index] = window.setTimeout(() => {
+          const newFish = fishList[Math.floor(Math.random() * fishList.length)]
+
+          // 新しい魚をセット
+          setTankFish(prev =>
+            prev.map((fish, i) =>
+              i === index ? newFish : fish
+            )
+          )
+
+          // 復活のアニメーション
+          setFishRespawning(prev =>
+            prev.map((respawning, i) =>
+              i === index ? true : respawning
+            )
+          )
+
+          // 魚の表示
+          setFishVisible(prev =>
+            prev.map((visible, i) =>
+              i === index ? true : visible
+            )
+          )
+          // 復活アニメーションのリセット
+          setTimeout(() => {
+            setFishRespawning(prev =>
+              prev.map((respawning, i) =>
+                i === index ? false : respawning
+              )
+            )
+          }, 1000)　//自動削除後に復活までのニメーションの時間
+
+
+          // 復活したので、また30秒タイマー開始
+          startAutoHideTimer(index)
+        }, 8000)　//自動消失後に復活するまでの時間
+
+      }, 1000) //自動で消えるアニメーションの時間
+
+    }, 20000) //自動で消えるまでの時間
+  }
+  // 実際の処理
+  useEffect(() => {
+    tankFish.forEach((_, index) => {
+      startAutoHideTimer(index)
+    })
+    return () => {
+      autoHideTimers.current.forEach(timer => {
+        clearTimeout(timer)
+      })
+
+      respawnTimers.current.forEach(timer => {
+        clearTimeout(timer)
+      })
+    }
+  }, [])
+  // クリック
   // 魚の表示・登録の関数
   const catchFish = (index: number) => {
+    // アニメーション中はクリックできない
+    if (
+      fishLeaving[index] ||
+      fishCatching[index] ||
+      fishRespawning[index]
+    ) {
+      return
+    }
     const fish = tankFish[index]
-
+    // 自動消滅の30秒タイマーをキャンセル
+    clearTimeout(autoHideTimers.current[index])
+    
     // 履歴に追加
     setFishHistory([...fishHistory, fish].slice(-6))
-
+    
     // 図鑑に追加
     setFishCollection({
       ...fishCollection,
       [fish]: (fishCollection[fish] || 0) + 1
     })
 
-    // 魚を非表示
+  // クリックアニメーション開始
+  setFishCatching(prev =>
+    prev.map((catching, i) =>
+      i === index ? true : catching
+    )
+  )
+
+  // アニメーション終了後に完全に消す
+  setTimeout(() => {
     setFishVisible(prev =>
       prev.map((visible, i) =>
         i === index ? false : visible
       )
     )
-    // 数秒後に再表示
-    setTimeout(() => {
+    // クリックアニメーション初期化
+    setFishCatching(prev =>
+      prev.map((catching, i) =>
+        i === index ? false : catching
+      )
+    )
 
-      const newFish =
-      fishList[Math.floor(Math.random() * fishList.length)]
+    // 完全に消えてから10秒後に復活
+    setTimeout(() => {
+      const newFish = fishList[Math.floor(Math.random() * fishList.length)]
+      // 新しい魚をセット
       setTankFish(prev =>
         prev.map((fish, i) =>
           i === index ? newFish : fish
         )
       )
+      // 復活のアニメーション
+      setFishRespawning(prev =>
+        prev.map((respawning, i) =>
+          i === index ? true : respawning
+        )
+      )
+      // 魚の表示
       setFishVisible(prev =>
         prev.map((visible, i) =>
           i === index ? true : visible
         )
       )
+      // 復活アニメーションのリセット
+      setTimeout(() => {
+        setFishRespawning(prev =>
+          prev.map((respawning, i) =>
+            i === index ? false : respawning
+          )
+        )
+      }, 1000) //クリック後に復活までのアニメーションの時間
 
-    }, 6000) //60秒
-  }
+      // 復活したので30秒タイマー開始
+      startAutoHideTimer(index)
+
+    }, 8000) //クリック後復活までの時間
+  }, 1000) //クリックアニメーションの時間
+}
 
   return (
     <>
@@ -119,33 +273,73 @@ function App() {
                   <div className="monitor_feald">
                     
                     {fishVisible[0] && (
-                    <button className="fidh-1"
-                      onClick={() => catchFish(0)}
-                    >{tankFish[0]}</button>
+                    <div className={`
+                      ${fishLeaving[0] ? "fish-leaving" : ""}
+                      ${fishCatching[0] ? "fish-catching" : ""}
+                      ${fishRespawning[0] ? "fish-respawning" : ""}
+                    `} >
+                      <button className="fish-1"
+                        onClick={() => catchFish(0)}
+                      >{tankFish[0]}
+                        <span class="clickAnimation"></span>
+                      </button>
+                    </div>
                     )}
                     
                     {fishVisible[1] && (
-                    <button className="fidh-2"
-                      onClick={() => catchFish(1)}
-                    >{tankFish[1]}</button>
+                    <div className={`
+                      ${fishLeaving[1] ? "fish-leaving" : ""}
+                      ${fishCatching[1] ? "fish-catching" : ""}
+                      ${fishRespawning[1] ? "fish-respawning" : ""}
+                    `} >
+                      <button className="fish-2"
+                        onClick={() => catchFish(1)}
+                      >{tankFish[1]}
+                        <span class="clickAnimation"></span>
+                      </button>
+                    </div>
                     )}
                     
                     {fishVisible[2] && (
-                    <button className="fidh-3"
-                      onClick={() => catchFish(2)}
-                    >{tankFish[2]}</button>
+                    <div className={`
+                      ${fishLeaving[2] ? "fish-leaving" : ""}
+                      ${fishCatching[2] ? "fish-catching" : ""}
+                      ${fishRespawning[2] ? "fish-respawning" : ""}
+                    `} >
+                      <button className="fish-3"
+                        onClick={() => catchFish(2)}
+                      >{tankFish[2]}
+                        <span class="clickAnimation"></span>
+                      </button>
+                    </div>
                     )}
                     
                     {fishVisible[3] && (
-                    <button className="fidh-4"
-                      onClick={() => catchFish(3)}
-                    >{tankFish[3]}</button>
+                    <div className={`
+                      ${fishLeaving[3] ? "fish-leaving" : ""}
+                      ${fishCatching[3] ? "fish-catching" : ""}
+                      ${fishRespawning[3] ? "fish-respawning" : ""}
+                    `} >
+                      <button className="fish-4"
+                        onClick={() => catchFish(3)}
+                      >{tankFish[3]}
+                        <span class="clickAnimation"></span>
+                      </button>
+                    </div>
                     )}
                     
                     {fishVisible[4] && (
-                    <button className="fidh-5"
-                      onClick={() => catchFish(4)}
-                    >{tankFish[4]}</button>
+                    <div className={`
+                      ${fishLeaving[4] ? "fish-leaving" : ""}
+                      ${fishCatching[4] ? "fish-catching" : ""}
+                      ${fishRespawning[4] ? "fish-respawning" : ""}
+                    `} >
+                      <button className="fish-5"
+                        onClick={() => catchFish(4)}
+                      >{tankFish[4]}
+                        <span class="clickAnimation"></span>
+                      </button>
+                    </div>
                     )}
                   </div>
                   {/* 背景 */}
