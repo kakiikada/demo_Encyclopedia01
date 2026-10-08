@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400&family=Klee+One&display=swap');
 :root {
   --color_text: #333;
   --color_bg: #fff;
@@ -10,11 +11,20 @@
   --inner_m: 0.5rem;
   --inner_s: 0.25rem;
 
-  font-family: "M PLUS Rounded 1c", sans-serif;
+  --font-family-main: "Klee One", cursive;
+  --font-family-title: "Caveat", cursive;
+
+  --shadow: 0.125rem 0.125rem 0.25rem 0 rgba(70, 54, 43, 0.5);
   color: var(--color_text);
   background-color: var(--color_bg);
   -moz-osx-font-smoothing: grayscale;
 }
 body {
   position: relative;
+  font-family: var(--font-family-main);
+  font-size: 0.875rem;
+  background-color: #2f2f50;
+  @media screen and (min-width: 767px) {
+    font-size: 1rem;
+  }
 }

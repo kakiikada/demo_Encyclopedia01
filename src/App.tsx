@@ -392,7 +392,7 @@ function App() {
       <section>
         {/* header */}
         <div className="header">
-          <h1 className="header_title">まほうの水槽</h1>
+          <h1 className="header_title">ふしぎな水槽</h1>
           <div className="header_Explanation">
             <button className="header_Explanation_title"
             onClick={() => setIsExplanationOpen(!isExplanationOpen)}
@@ -403,6 +403,7 @@ function App() {
             >
               <div className="Explanation">
                 <p className="Explanation_caption">本作品は主にAPI通信とアニメーションの技術力向上と画面設計・制作作業力の習得のために作成したポートフォリオゲームです。</p>
+                <p>魚をクリック（タップ）すると捕まえることができます。<br />右下の図鑑アイコンで、捕まえた魚の情報と入手個数を確認できます。入手個数が一定数（１０個など）を超えると、図鑑内テキストに王冠マークがつきます。<br />捕まえた魚は消失しますが、少し待つと復活します。</p>
                 <p className="Explanation_title">実装スキル</p>
                 <ul className="Explanation_list">
                   <li>API通信</ li>
@@ -416,6 +417,7 @@ function App() {
                 </ul>
               </div>
             </div>
+            <div className="header_Explanation_overlay" onClick={() => setIsExplanationOpen(!isExplanationOpen)}></div>
           </div>
         </div>
         <main>
@@ -504,8 +506,12 @@ function App() {
                   {/* 背景 */}
                   <div className="monitor_bg">
                     <div className="monitor_bg_overlay"></div>
-                    <div className="seaweed-1"></div>
+                    <div className="bubble-2"></div>
+                    <div className="bubble-1"></div>
                     <div className="seaweed-2"></div>
+                    <div className="seaweed-1"></div>
+                    <div className="seaweed-3"></div>
+                    <div className="monitor_bg_gradation3"></div>
                     <div className="monitor_bg_gradation2"></div>
                     <div className="monitor_bg_gradation"></div>
                   </div>
@@ -521,66 +527,74 @@ function App() {
                       key={index}
                       className={index === 0 && historyLeaving ? "history-leaving" : ""}
                     >
-                      <button>{fish}</button>
+                      <div>{fish}</div>
                     </li>
                   ))}
                   </ul>
                 </div>
               </section>
             </div>
-            <div className="mainLayout_menu">
-              {/* 図鑑 */}
-              <section>
-                <div className="menu">
-                  <button className="menu_btn"
-                  onClick={() => setIsBookOpen(!isBookOpen)}
-                  ></button>
-                  <div className=
-                  {isBookOpen ? ('menu_feald active'):('menu_feald')}
-                  onClick={() => setIsBookOpen(!isBookOpen)}
-                  >
-                    <div className="menuFeald" onClick={(e) => e.stopPropagation()}>
-                      <p className="menuFeald_title">Encyclopedia</p>
-                      <ul className="menuFeald_list">
-                          {fishList.map((fish, index) =>
-                            fishCollection[fish] >= 1 ? (
-                              <li key={fish}><button
-                              onClick={() => {
-                                setBookPage(index)
-                              }}
-                              className={index === bookPage ? "active" : ""}
-                              >{fish}{fishCollection[fish]}匹</button></li>
-                            ):(
-                              <li key={fish}><div><img src={no_icon} alt="" /></div></li>
-                            )
-                          )}
-                      </ul>
-                      <div className="menuFeald_note">
-                        <div className="menuFeald_note_img">
-                          <img 
-                            src={fishData[bookPage]?.image || no_image}
-                            alt={bookPage === null ? "---" : fishData[bookPage].name} />
-                          </div>
-                        <ul className="menuFeald_note_list">
-                          <li><h2>名前：{fishData[bookPage]?.name || "---"}</h2></li>
-                          <li>学名：{fishData[bookPage]?.scientificName || "---"}</li>
-                          <li className="menuFeald_note_list_family"><p>分類：</p>
-                          <div>
-                            <p>界：{fishData[bookPage]?.classification?.phylum || "---"}</p>
-                            <p>目：{fishData[bookPage]?.classification?.order || "---"}</p>
-                            <p>科：{fishData[bookPage]?.classification?.family || "---"}</p>
-                          </div>
-                            </li>
-                          <li>生息地：{fishData[bookPage]?.habitat || "---"}</li>
-                          <li>入手数：{bookPage === null ? "---" : fishCollection[fishData[bookPage].name] || 0}匹</li>
-                        </ul>
-                      </div>                    
-                    </div>
-                  </div>
-                </div>
-              </section>
-            </div>
           </div>
+          {/* 図鑑 */}
+          <section>
+            <div className="menu">
+              <button className="menu_btn"
+              onClick={() => setIsBookOpen(!isBookOpen)}
+              ></button>
+              <div className=
+              {isBookOpen ? ('menu_feald active'):('menu_feald')}
+              onClick={() => setIsBookOpen(!isBookOpen)}
+              >
+                <div className="menuFeald" onClick={(e) => e.stopPropagation()}>
+                  <p className="menuFeald_title">Encyclopedia</p>
+                  <ul className="menuFeald_list">
+                      {fishList.map((fish, index) =>
+                        fishCollection[fish] >= 1 ? (
+                          <li key={fish}><button
+                          onClick={() => {
+                            setBookPage(index)
+                          }}
+                          className={index === bookPage ? "active" : ""}
+                          >{fish}{fishCollection[fish]}匹</button></li>
+                        ):(
+                          <li key={fish}><div><img src={no_icon} alt="" /></div></li>
+                        )
+                      )}
+                  </ul>
+                  <div className="menuFeald_note">
+                    <div className="menuFeald_note_img">
+                      <img 
+                        src={fishData[bookPage]?.image || no_image}
+                        alt={bookPage === null ? "---" : fishData[bookPage].name} />
+                        <p>※画像の読み込みに数秒ほど時間がかかる場合がございます。</p>
+                    </div>
+                    <ul className="menuFeald_note_list">
+                      <li><h2>名前：{fishData[bookPage]?.name || "---"}</h2></li>
+                      <li>学名：{fishData[bookPage]?.scientificName || "---"}</li>
+                      <li className="menuFeald_note_list_family"><p>分類：</p>
+                      <div>
+                        <p>界：{fishData[bookPage]?.classification?.phylum || "---"}</p>
+                        <p>目：{fishData[bookPage]?.classification?.order || "---"}</p>
+                        <p>科：{fishData[bookPage]?.classification?.family || "---"}</p>
+                      </div>
+                        </li>
+                      <li>生息地：{fishData[bookPage]?.habitat || "---"}</li>
+                      <li>入手数：
+                        {bookPage === null ? "---" : fishCollection[fishData[bookPage].name] || 0}匹
+                        <div
+                          className={
+                            bookPage === null ? "---" :
+                            fishCollection[fishData[bookPage].name]  >= 100 ? 'count-100' :
+                            fishCollection[fishData[bookPage].name]  >= 10 ? 'count-10' : ''
+                          }
+                        ></div>
+                        </li>
+                    </ul>
+                  </div>                    
+                </div>
+              </div>
+            </div>
+          </section>
         </main>
       </section>
     </>
