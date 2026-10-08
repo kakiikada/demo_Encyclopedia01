@@ -32,51 +32,143 @@ function App() {
   const fishList = ["カクレクマノミ", "ベタ", "エンゼルフィッシュ", "ハリセンボン", "ニシキテグリ"]
   // ランダムに５匹を選出
 
+// 
+  const [fishApiData, setFishApiData] = useState<any>(null);
+  const [fishOccurrenceData, setFishOccurrenceData] = useState<any>(null);
+  
 
- // 魚の仮データ
-  const fishData = [
+  
+  // APIで魚のデータを取得
+  useEffect(() => {
+    // 未選択なら呼ばない
+    if (bookPage === null) {
+      return;
+    }
+    // ローカルストレージにデータがあれば呼ばない
+    const currentFish = fishData[bookPage];
+    if (currentFish?.image && currentFish?.classification?.phylum) {
+      return;
+    }
+
+    const scientificName = fishData[bookPage]?.scientificName;
+    fetch(
+      `https://api.gbif.org/v1/species/match?name=${encodeURIComponent(scientificName)}`
+    )
+    .then((response) => response.json())
+    .then((data) => {
+      setFishApiData(data);
+      const classification = {
+        phylum: data.phylum,
+        order: data.order,
+        family: data.family,
+      };
+      setFishData((prev) =>
+        prev.map((fish) =>
+          fish.scientificName === scientificName
+          ? { ...fish, classification: classification }
+          : fish
+        )
+      );
+
+      return fetch(
+        `https://api.gbif.org/v1/occurrence/search?taxon_key=${data.usageKey}`
+      );
+    })
+    .then((response) => response.json())
+    .then((data) => {
+      setFishOccurrenceData(data);
+
+      const imageData = data.results?.find(
+        (item: any) => item.media?.[1]?.identifier
+      );
+
+      const image = imageData?.media?.[0]?.identifier || "";
+      setFishData((prev) => {
+        const newFishData = prev.map((fish) =>
+          fish.scientificName === scientificName
+          ? { ...fish, image: image }
+          : fish
+        );
+        return newFishData;
+      });
+    });
+  }, [bookPage]);
+  const imageData = fishOccurrenceData?.results?.find(
+    (item: any) => item.media?.[0]?.identifier
+  );
+
+ // 魚のデータ元
+  const initialFishData = [
     {
       name: "カクレクマノミ",
       scientificName: "Amphiprion ocellaris",
-      family: "カクレクマノミの分類",
-      habitat: "カクレクマノミの生息地",
-      // image: betta,
+      phylum: "",
+      order: "",
+      family: "",
+      habitat: "インド太平洋などのサンゴ礁",
+      image: "",
     },
     {
       name: "ベタ",
       scientificName: "Betta splendens",
-      family: "ベタの分類",
-      habitat: "ベタの生息地",
-      // image: betta,
+      phylum: "",
+      order: "",
+      family: "",
+      habitat: "原種は東南アジアの淡水域",
+      image: "",
     },
     {
       name: "エンゼルフィッシュ",
-      scientificName: "Pterophyllum",
-      family: "エンゼルフィッシュの分類",
-      habitat: "エンゼルフィッシュの生息地",
-      // image: betta,
+      scientificName: "Pterophyllum scalare",
+      phylum: "",
+      order: "",
+      family: "",
+      habitat: "アマゾン川流域を中心とした南アメリカ北部",
+      image: "",
     },
     {
       name: "ハリセンボン",
       scientificName: "Diodon holocanthus",
-      family: "フグ目ハリセンボン科ハリセンボン属",
-      habitat: "ハリセンボンの生息地",
-      // image: betta,
+      phylum: "",
+      order: "",
+      family: "",
+      habitat: "全世界の熱帯から温帯、浅い海の岩礁、サンゴ礁、砂底",
+      image: "",
     },
     {
       name: "ニシキテグリ",
       scientificName: "Synchiropus splendidus",
-      family: "ネズッポ科コウワンテグリ属ニシキテグリ",
-      habitat: "琉球諸島からオーストラリアにかけての太平洋",
-      // image: SynchiropusSplendidus,
+      phylum: "",
+      order: "",
+      family: "",
+      habitat: "琉球諸島からオーストラリアにかけての太平洋の珊瑚礁帯",
+      image: "",
     },
-  ]
+    // ...
+  ];
+  // ローカルストレージ管理
+  const [fishData, setFishData] = useState(() => {
+    const savedFishData = localStorage.getItem("fishData");
 
+    if (savedFishData) {
+      return JSON.parse(savedFishData);
+    }
+
+    return initialFishData;
+  });
+
+  // api追加配列
   const [tankFish, setTankFish] = useState(() =>
     Array.from({ length: 5 }, () =>
       fishList[Math.floor(Math.random() * fishList.length)]
     )
   )
+
+  // apiデータをローカルストレージに保存
+  useEffect(() => {
+    localStorage.setItem("fishData", JSON.stringify(fishData));
+  }, [fishData]);
+
   // 標示管理
   const timers = useRef<(number | undefined)[]>([])
   const autoHideTimers = useRef<number[]>([])
@@ -334,7 +426,6 @@ function App() {
                 <div className="monitor">
                   {/* 魚 */}
                   <div className="monitor_feald">
-                    
                     {fishVisible[0] && (
                     <div className={`
                       ${fishLeaving[0] ? "fish-leaving" : ""}
@@ -453,11 +544,11 @@ function App() {
                       <ul className="menuFeald_list">
                           {fishList.map((fish, index) =>
                             fishCollection[fish] >= 1 ? (
-
                               <li key={fish}><button
-                                onClick={() => {
-                                  setBookPage(index)
-                                }}
+                              onClick={() => {
+                                setBookPage(index)
+                              }}
+                              className={index === bookPage ? "active" : ""}
                               >{fish}{fishCollection[fish]}匹</button></li>
                             ):(
                               <li key={fish}><div><img src={no_icon} alt="" /></div></li>
@@ -465,15 +556,25 @@ function App() {
                           )}
                       </ul>
                       <div className="menuFeald_note">
-                        <div className="menuFeald_note_img"><img src={bookPage === null ? no_image : fishData[bookPage].image} alt={bookPage === null ? "---" : fishData[bookPage].name} /></div>
+                        <div className="menuFeald_note_img">
+                          <img 
+                            src={fishData[bookPage]?.image || no_image}
+                            alt={bookPage === null ? "---" : fishData[bookPage].name} />
+                          </div>
                         <ul className="menuFeald_note_list">
-                          <li><h2>名前：{bookPage === null ? "---" : fishData[bookPage].name}</h2></li>
-                          <li>学名：{bookPage === null ? "---" : fishData[bookPage].scientificName}</li>
-                          <li>分類：{bookPage === null ? "---" : fishData[bookPage].family}</li>
-                          <li>生息地：{bookPage === null ? "---" : fishData[bookPage].habitat}</li>
+                          <li><h2>名前：{fishData[bookPage]?.name || "---"}</h2></li>
+                          <li>学名：{fishData[bookPage]?.scientificName || "---"}</li>
+                          <li className="menuFeald_note_list_family"><p>分類：</p>
+                          <div>
+                            <p>界：{fishData[bookPage]?.classification?.phylum || "---"}</p>
+                            <p>目：{fishData[bookPage]?.classification?.order || "---"}</p>
+                            <p>科：{fishData[bookPage]?.classification?.family || "---"}</p>
+                          </div>
+                            </li>
+                          <li>生息地：{fishData[bookPage]?.habitat || "---"}</li>
                           <li>入手数：{bookPage === null ? "---" : fishCollection[fishData[bookPage].name] || 0}匹</li>
                         </ul>
-                      </div>
+                      </div>                    
                     </div>
                   </div>
                 </div>
