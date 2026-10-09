@@ -163,10 +163,10 @@
     padding-top: 0.5rem;
     gap: 0.5rem;
     li {
-      div {
+      img {
         height: 2rem;
         width: 2rem;
-        background-color: var(--color_bg);
+        /* background-color: var(--color_bg); */
       }
     }
   }
@@ -243,12 +243,15 @@
           width: 2.5rem;
           background-color: #edeee6;
           box-shadow: var(--shadow);
+          transition: .5s;
+          border: 0.125rem solid var(--color_bg);
           @media screen and (min-width: 767px) {
             height: 5rem;
             width: 5rem;
           }
           &.active {
-            opacity: 0.6;
+            border: 0.125rem solid red;
+            pointer-events: none;
           }
         }
         button:hover {
@@ -315,7 +318,7 @@
 /* 魚の動き・表示 */
 .fish-1, .fish-2, .fish-3, .fish-4, .fish-5 {
   position: absolute;
-  height: 3rem;
+  height: 6rem;
   width: 6rem;
   img {
     width: 100%;

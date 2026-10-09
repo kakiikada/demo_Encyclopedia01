@@ -2,6 +2,18 @@ import { useState, useEffect, useRef } from 'react'
 import no_image from "./assets/no_image.png"
 import no_icon from "./assets/no_icon.png"
 import fish_demo from "./assets/fish_demo.png"
+
+import fish01 from "./assets/fish-01.png"
+import fish02 from "./assets/fish-02.png"
+import fish03 from "./assets/fish-03.png"
+import fish04 from "./assets/fish-04.png"
+import fish05 from "./assets/fish-05.png"
+
+import fish_icon01 from "./assets/fish_icon-01.png"
+import fish_icon02 from "./assets/fish_icon-02.png"
+import fish_icon03 from "./assets/fish_icon-03.png"
+import fish_icon04 from "./assets/fish_icon-04.png"
+import fish_icon05 from "./assets/fish_icon-05.png"
 import './styles/App.css'
 
 function App() {
@@ -107,6 +119,8 @@ function App() {
       family: "",
       habitat: "インド太平洋などのサンゴ礁",
       image: "",
+      illust: fish01,
+      icon: fish_icon01,
     },
     {
       name: "ベタ",
@@ -116,6 +130,8 @@ function App() {
       family: "",
       habitat: "原種は東南アジアの淡水域",
       image: "",
+      illust: fish02,
+      icon: fish_icon02,
     },
     {
       name: "エンゼルフィッシュ",
@@ -125,6 +141,8 @@ function App() {
       family: "",
       habitat: "アマゾン川流域を中心とした南アメリカ北部",
       image: "",
+      illust: fish03,
+      icon: fish_icon03,
     },
     {
       name: "ハリセンボン",
@@ -134,6 +152,8 @@ function App() {
       family: "",
       habitat: "全世界の熱帯から温帯、浅い海の岩礁、サンゴ礁、砂底",
       image: "",
+      illust: fish04,
+      icon: fish_icon04,
     },
     {
       name: "ニシキテグリ",
@@ -143,6 +163,8 @@ function App() {
       family: "",
       habitat: "琉球諸島からオーストラリアにかけての太平洋の珊瑚礁帯",
       image: "",
+      illust: fish05,
+      icon: fish_icon05,
     },
     // ...
   ];
@@ -160,7 +182,7 @@ function App() {
   // api追加配列
   const [tankFish, setTankFish] = useState(() =>
     Array.from({ length: 5 }, () =>
-      fishList[Math.floor(Math.random() * fishList.length)]
+      fishData[Math.floor(Math.random() * fishData.length)]
     )
   )
 
@@ -232,7 +254,7 @@ function App() {
 
         // 20秒後に復活
         respawnTimers.current[index] = window.setTimeout(() => {
-          const newFish = fishList[Math.floor(Math.random() * fishList.length)]
+          const newFish = fishData[Math.floor(Math.random() * fishData.length)];
 
           // 新しい魚をセット
           setTankFish(prev =>
@@ -351,7 +373,7 @@ function App() {
 
       // 完全に消えてから10秒後に復活
       setTimeout(() => {
-        const newFish = fishList[Math.floor(Math.random() * fishList.length)]
+        const newFish = fishData[Math.floor(Math.random() * fishData.length)];
         // 新しい魚をセット
         setTankFish(prev =>
           prev.map((fish, i) =>
@@ -436,8 +458,11 @@ function App() {
                     `} >
                       <button className="fish-1"
                         onClick={() => catchFish(0)}
-                      >{tankFish[0]}
-                        <img src={fish_demo} alt="" />
+                      >
+                      <img
+                        src={tankFish[0].illust}
+                        alt={tankFish[0].name}
+                        />
                         <span className="clickAnimation"></span>
                       </button>
                     </div>
@@ -451,8 +476,11 @@ function App() {
                     `} >
                       <button className="fish-2"
                         onClick={() => catchFish(1)}
-                      >{tankFish[1]}
-                        <img src={fish_demo} alt="" />
+                      >
+                      <img
+                        src={tankFish[1].illust}
+                        alt={tankFish[1].name}
+                        />
                         <span className="clickAnimation"></span>
                       </button>
                     </div>
@@ -466,8 +494,11 @@ function App() {
                     `} >
                       <button className="fish-3"
                         onClick={() => catchFish(2)}
-                      >{tankFish[2]}
-                        <img src={fish_demo} alt="" />
+                      >
+                      <img
+                        src={tankFish[2].illust}
+                        alt={tankFish[2].name}
+                        />
                         <span className="clickAnimation"></span>
                       </button>
                     </div>
@@ -481,8 +512,11 @@ function App() {
                     `} >
                       <button className="fish-4"
                         onClick={() => catchFish(3)}
-                      >{tankFish[3]}
-                        <img src={fish_demo} alt="" />
+                      >
+                      <img
+                        src={tankFish[3].illust}
+                        alt={tankFish[3].name}
+                        />
                         <span className="clickAnimation"></span>
                       </button>
                     </div>
@@ -496,8 +530,11 @@ function App() {
                     `} >
                       <button className="fish-5"
                         onClick={() => catchFish(4)}
-                      >{tankFish[4]}
-                        <img src={fish_demo} alt="" />
+                      >
+                      <img
+                        src={tankFish[4].illust}
+                        alt={tankFish[4].name}
+                        />
                         <span className="clickAnimation"></span>
                       </button>
                     </div>
@@ -527,7 +564,7 @@ function App() {
                       key={index}
                       className={index === 0 && historyLeaving ? "history-leaving" : ""}
                     >
-                      <div>{fish}</div>
+                      <img src={fish.icon} alt={fish.name} />
                     </li>
                   ))}
                   </ul>
@@ -548,16 +585,18 @@ function App() {
                 <div className="menuFeald" onClick={(e) => e.stopPropagation()}>
                   <p className="menuFeald_title">Encyclopedia</p>
                   <ul className="menuFeald_list">
-                      {fishList.map((fish, index) =>
+                      {fishData.map((fish, index) =>
                         fishCollection[fish] >= 1 ? (
-                          <li key={fish}><button
+                          <li key={fish.name}><button
                           onClick={() => {
                             setBookPage(index)
                           }}
                           className={index === bookPage ? "active" : ""}
-                          >{fish}{fishCollection[fish]}匹</button></li>
+                          >
+                            <img src={fish.icon} alt={fish.name} />
+                            </button></li>
                         ):(
-                          <li key={fish}><div><img src={no_icon} alt="" /></div></li>
+                          <li key={fish.name}><div><img src={no_icon} alt="" /></div></li>
                         )
                       )}
                   </ul>
