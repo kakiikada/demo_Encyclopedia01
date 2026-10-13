@@ -34,6 +34,7 @@ export const initialFishData: Fish[] = [
     image: "",
     illust: fish01,
     icon: fish_icon01,
+    probability: 50,
     classification: {
         phylum: "...",
         order: "...",
@@ -47,6 +48,7 @@ export const initialFishData: Fish[] = [
     image: "",
     illust: fish02,
     icon: fish_icon02,
+    probability: 17,
     classification: {
         phylum: "...",
         order: "...",
@@ -60,9 +62,10 @@ export const initialFishData: Fish[] = [
     image: "",
     illust: fish03,
     icon: fish_icon03,
-    phylum: "",
-    order: "",
-    family: "",
+    probability: 13,
+        phylum: "",
+        order: "",
+        family: "",
 },
 {
     name: "ハリセンボン",
@@ -71,6 +74,7 @@ export const initialFishData: Fish[] = [
     image: "",
     illust: fish04,
     icon: fish_icon04,
+    probability: 12,
     classification: {
         phylum: "...",
         order: "...",
@@ -84,6 +88,7 @@ export const initialFishData: Fish[] = [
     image: "",
     illust: fish05,
     icon: fish_icon05,
+    probability: 8,
     classification: {
         phylum: "...",
         order: "...",

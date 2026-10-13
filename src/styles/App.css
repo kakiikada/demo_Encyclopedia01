@@ -13,20 +13,28 @@
     padding: var(--inner_m);
     color: var(--color_bg);
   }
+  .header_time {
+    padding: var(--inner_m);
+    color: var(--color_bg);
+    .header_time_colon {
+      animation: colon-blink 1s steps(2, start) infinite;
+    }
+  }
   .header_Explanation {
     pointer-events: all;
     position: relative;
     .header_Explanation_title {
       z-index: 10;
       position: relative;
+      font-weight: bold;
       color: var(--color_bg);
       padding: var(--inner_m);
       padding-bottom: 1rem;
-      background-color: var(--color_main);
+      background-color: #0f105533;
     }
     .header_Explanation_content {
       z-index: 8;
-      background-color: var(--color_main);
+      background-color: #0f105533;
       position: fixed;
       transform:translateY(-100%);
       top: 0;
@@ -710,5 +718,11 @@
   100% {
     bottom: 50rem;
     opacity: 0;
+  }
+}
+/* 時計のコロンの点滅 */
+@keyframes colon-blink {
+  to {
+    visibility: hidden;
   }
 }

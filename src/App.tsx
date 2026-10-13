@@ -35,15 +35,12 @@ function App() {
     )
   }, [fishCollection])
 
-  const fishList = ["カクレクマノミ", "ベタ", "エンゼルフィッシュ", "ハリセンボン", "ニシキテグリ"]
+  // const fishList = ["カクレクマノミ", "ベタ", "エンゼルフィッシュ", "ハリセンボン", "ニシキテグリ"]
   // ランダムに５匹を選出
-
 // 
   const [fishApiData, setFishApiData] = useState<any>(null);
   const [fishOccurrenceData, setFishOccurrenceData] = useState<any>(null);
-  
 
-  
   // APIで魚のデータを取得
   useEffect(() => {
     // 未選択なら呼ばない
@@ -115,11 +112,30 @@ function App() {
   });
 
   // api追加配列
-  const [tankFish, setTankFish] = useState(() =>
-    Array.from({ length: 5 }, () =>
-      fishData[Math.floor(Math.random() * fishData.length)]
+  // 確率の関数
+  const getRandomFish = () => {
+    const totalProbability = fishData.reduce(
+      (sum, fish) => sum + fish.probability,
+      0
     )
+
+    let random = Math.random() * totalProbability
+
+    for (const fish of fishData) {
+      random -= fish.probability
+
+      if (random < 0) {
+        return fish
+      }
+    }
+
+    return fishData[fishData.length - 1]
+  }
+  // 魚をランダムに抽選
+  const [tankFish, setTankFish] = useState(() =>
+    Array.from({ length: 5 }, () => getRandomFish())
   )
+
 
   // apiデータをローカルストレージに保存
   useEffect(() => {
@@ -189,7 +205,7 @@ function App() {
 
         // 20秒後に復活
         respawnTimers.current[index] = window.setTimeout(() => {
-          const newFish = fishData[Math.floor(Math.random() * fishData.length)];
+          const newFish = getRandomFish();
 
           // 新しい魚をセット
           setTankFish(prev =>
@@ -308,7 +324,7 @@ function App() {
 
       // 完全に消えてから10秒後に復活
       setTimeout(() => {
-        const newFish = fishData[Math.floor(Math.random() * fishData.length)];
+        const newFish = getRandomFish();
         // 新しい魚をセット
         setTankFish(prev =>
           prev.map((fish, i) =>
@@ -384,13 +400,11 @@ function App() {
 
 
           <h1 className="header_title">ふしぎな水槽</h1>
-          <div className="header_title">
+          <div className="header_time">
             {/* 時間表示 */}
-            {currentTime.toLocaleTimeString("ja-JP", {
-              hour: "2-digit",
-              minute: "2-digit",
-              // second: "2-digit",
-            })}
+            {currentTime.getHours().toString().padStart(2, "0")}
+            <span className="header_time_colon">:</span>
+            {currentTime.getMinutes().toString().padStart(2, "0")}
           </div>
           <div className="header_Explanation">
             <button className="header_Explanation_title"
@@ -403,9 +417,10 @@ function App() {
               <div className="Explanation">
                 <p className="Explanation_caption">本作品は主にAPI通信とアニメーションの技術力向上と画面設計・制作作業力の習得のために作成したポートフォリオゲームです。</p>
                 <ul className="Explanation_list">
-                  <li>魚をクリック（タップ）すると捕まえることができます。</li>
+                  <li>魚をクリック（タップ）すると捕まえることができます。（クリックの際、簡易エフェクトが表示されます）</li>
                   <li>右下の図鑑アイコンで、捕まえた魚の情報と入手個数を確認できます。入手個数が一定数（１０個など）を超えると、図鑑内テキストに王冠マークがつきます。</li>
-                  <li>捕まえた魚は消失しますが、少し待つと復活します。</li>   
+                  <li>捕まえた魚は消失しますが、少し待つと復活します。</li>
+                  <li>現在時間が「6時」「10時」「18時」「20時」のタイミングで背景色が変化します。</li>
                 </ul>
                 <p className="Explanation_title">実装スキル</p>
                 <ul className="Explanation_list">
