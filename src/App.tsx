@@ -112,7 +112,7 @@ function App() {
   });
 
   // api追加配列
-  // 確率の関数
+  // 出現確率に応じて魚を1匹選ぶ
   const getRandomFish = () => {
     const totalProbability = fishData.reduce(
       (sum, fish) => sum + fish.probability,
@@ -371,7 +371,6 @@ function App() {
   }, []);
 
   const hour = currentTime.getHours();
-  const minutes = currentTime.getMinutes();
 
   let timeZone = "";
 
@@ -379,17 +378,27 @@ function App() {
     timeZone = "morning";
   } else if (hour >= 10 && hour < 18) {
     timeZone = "day";
-    // if(minutes >= 0 && minutes < 34){
-    //   timeZone = "day";
-    // }else{
-    //   timeZone = "evening";
-    // }
-
   } else if (hour >= 18 && hour < 20) {
     timeZone = "evening";
   } else {
     timeZone = "night";
   }
+
+  const handleResetSaveData = () => {
+    // 本当に消してよいか確認する
+    const isConfirmed = window.confirm(
+      "図鑑の登録データを削除しますか？この操作は元に戻せません。"
+    );
+
+    // キャンセルされたら何もしない
+    if (!isConfirmed) return;
+
+    // 図鑑の保存データを削除する
+    localStorage.removeItem("fishCollection");
+
+    // 画面上の図鑑データもリセットする
+    setFishCollection([]);
+  };
 
 
   return (
@@ -433,6 +442,7 @@ function App() {
                   <li>localStorage</ li>
                   <li>複数データの扱い</ li>
                 </ul>
+                <button className="Explanation_clear" onClick={handleResetSaveData}>セーブデータを消す</button>
               </div>
             </div>
             <div className="header_Explanation_overlay" onClick={() => setIsExplanationOpen(!isExplanationOpen)}></div>

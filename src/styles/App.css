@@ -59,9 +59,12 @@
   }
   /* 実装内容 */
   .Explanation {
+    overflow-Y: auto;
     color: var(--color_bg);
     line-height: 1.5;
+    max-height: 100svh;
     padding: var(--inner_m);
+    padding-bottom: 2rem;
     max-width: 1600px;
     margin: 0 auto;
     .Explanation_caption {}
@@ -72,11 +75,22 @@
       margin-top: 1rem;
       list-style: disc;
       padding-left: 2rem;
-      padding-bottom: 2rem;
+      padding-bottom: 1rem;
       li {
         & + & {
           margin-top: 0.5rem;
         }
+      }
+    }
+    .Explanation_clear {
+      padding: var(--inner_m);
+      border-radius: .25rem;
+      color: var(--color_bg);
+      font-weight: bold;
+      transition: .3s;
+      background-color: var(--color_danger);
+      &:hover{
+        opacity: 0.8;
       }
     }
   }
@@ -278,7 +292,7 @@
             width: 5rem;
           }
           &.active {
-            border: 0.125rem solid red;
+            border: 0.125rem solid var(--color_main);
             pointer-events: none;
           }
         }

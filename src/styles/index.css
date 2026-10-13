@@ -4,6 +4,7 @@
   --color_bg: #fff;
   --color_base: #edeee6;  /*紙の色 */
   --color_main: #48497f;
+  --color_danger: #ff0000;
   --shadow: 0.125rem 0.125rem 0.25rem 0 rgba(70, 54, 43, 0.5);
 
   --inner_m: 0.5rem;
@@ -11,7 +12,7 @@
 
   --font-family-main: "Klee One", cursive;
   /* --font-family-title: "Caveat", cursive; */
-  
+
   color: var(--color_text);
   background-color: var(--color_bg);
   -moz-osx-font-smoothing: grayscale;
