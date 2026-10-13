@@ -22,11 +22,11 @@
       color: var(--color_bg);
       padding: var(--inner_m);
       padding-bottom: 1rem;
-      background-color: #48497f;
+      background-color: var(--color_main);
     }
     .header_Explanation_content {
       z-index: 8;
-      background-color: #48497f;
+      background-color: var(--color_main);
       position: fixed;
       transform:translateY(-100%);
       top: 0;
@@ -51,7 +51,7 @@
   }
   /* 実装内容 */
   .Explanation {
-    color: #fff;
+    color: var(--color_bg);
     line-height: 1.5;
     padding: var(--inner_m);
     max-width: 1600px;
@@ -115,12 +115,14 @@
       background-color: #888888;
       mix-blend-mode: overlay;
     }
+    /* 昼 朝 夜 */
     .monitor_bg_gradation, .monitor_bg_gradation2, .monitor_bg_gradation3 {
       z-index: 1;
       position: absolute;
       left: 0;
       right: 0;
       height: 100svh;
+      transition: 5s;
       background-image: linear-gradient(0deg, #23c0f0, #0049ad 18%, #003580 32% 39%, #0158b8 60%, #079de8 87%, #50e8ff);
     }
     .monitor_bg_gradation2 {
@@ -129,6 +131,24 @@
     .monitor_bg_gradation3 {
       background-image: linear-gradient(0deg, #074355, #001736 18%, #00193b 32% 39%, #002b58 60%, #066392 87%, #1d5799);
     }
+    /* 標示管理 */
+    /* 朝 */
+    .monitor_bg_gradation[data-time="morning"] { opacity: 0;}
+    /* 昼 */
+
+    /* 夕方 */
+    .monitor_bg_gradation[data-time="evening"] { opacity: 0;}
+    /* 夜 */
+    .monitor_bg_gradation[data-time="night"] {opacity: 0;}
+    .monitor_bg_gradation2[data-time="night"]{opacity: 0;}
+
+
+
+
+
+
+
+
   }
 }
 .history {
@@ -139,7 +159,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: #48497f;
+  background-color: var(--color_main);
   .history_title {
     position: absolute;
     font-size: 0.75rem;
@@ -150,7 +170,7 @@
     width: 3rem;
     padding: var(--inner_s);
     border-radius: 0.5rem 0.5rem 0 0 ;
-    background-color: #48497f;
+    background-color: var(--color_main);
   }
   .history_list {
     overflow: hidden;
@@ -186,7 +206,7 @@
     background-size: 70% auto;
     background-position: center;
     background-repeat: no-repeat;
-    background-color: #fff;
+    background-color: var(--color_bg);
     box-shadow: var(--shadow);
     transition: .2s;
     &:hover {
@@ -241,7 +261,7 @@
         button, div {
           height: 2.5rem;
           width: 2.5rem;
-          background-color: #edeee6;
+          background-color: var(--color_bg);
           box-shadow: var(--shadow);
           transition: .5s;
           border: 0.125rem solid var(--color_bg);
@@ -266,7 +286,7 @@
     .menuFeald_note {
       margin-top: 1rem;
       padding: var(--inner_s);
-      background-color: #edeee6;
+      background-color: var(--color_base);
       box-shadow: var(--shadow);
       @media screen and (min-width: 767px) {
         margin-top: 2rem;

@@ -1,19 +1,13 @@
 import { useState, useEffect, useRef } from 'react'
+
+import { initialFishData } from "./data/fishData"
+import Encyclopedia from "./components/Encyclopedia"
+
 import no_image from "./assets/no_image.png"
 import no_icon from "./assets/no_icon.png"
 import fish_demo from "./assets/fish_demo.png"
 
-import fish01 from "./assets/fish-01.png"
-import fish02 from "./assets/fish-02.png"
-import fish03 from "./assets/fish-03.png"
-import fish04 from "./assets/fish-04.png"
-import fish05 from "./assets/fish-05.png"
 
-import fish_icon01 from "./assets/fish_icon-01.png"
-import fish_icon02 from "./assets/fish_icon-02.png"
-import fish_icon03 from "./assets/fish_icon-03.png"
-import fish_icon04 from "./assets/fish_icon-04.png"
-import fish_icon05 from "./assets/fish_icon-05.png"
 import './styles/App.css'
 
 function App() {
@@ -109,65 +103,6 @@ function App() {
     (item: any) => item.media?.[0]?.identifier
   );
 
- // 魚のデータ元
-  const initialFishData = [
-    {
-      name: "カクレクマノミ",
-      scientificName: "Amphiprion ocellaris",
-      phylum: "",
-      order: "",
-      family: "",
-      habitat: "インド太平洋などのサンゴ礁",
-      image: "",
-      illust: fish01,
-      icon: fish_icon01,
-    },
-    {
-      name: "ベタ",
-      scientificName: "Betta splendens",
-      phylum: "",
-      order: "",
-      family: "",
-      habitat: "原種は東南アジアの淡水域",
-      image: "",
-      illust: fish02,
-      icon: fish_icon02,
-    },
-    {
-      name: "エンゼルフィッシュ",
-      scientificName: "Pterophyllum scalare",
-      phylum: "",
-      order: "",
-      family: "",
-      habitat: "アマゾン川流域を中心とした南アメリカ北部",
-      image: "",
-      illust: fish03,
-      icon: fish_icon03,
-    },
-    {
-      name: "ハリセンボン",
-      scientificName: "Diodon holocanthus",
-      phylum: "",
-      order: "",
-      family: "",
-      habitat: "全世界の熱帯から温帯、浅い海の岩礁、サンゴ礁、砂底",
-      image: "",
-      illust: fish04,
-      icon: fish_icon04,
-    },
-    {
-      name: "ニシキテグリ",
-      scientificName: "Synchiropus splendidus",
-      phylum: "",
-      order: "",
-      family: "",
-      habitat: "琉球諸島からオーストラリアにかけての太平洋の珊瑚礁帯",
-      image: "",
-      illust: fish05,
-      icon: fish_icon05,
-    },
-    // ...
-  ];
   // ローカルストレージ管理
   const [fishData, setFishData] = useState(() => {
     const savedFishData = localStorage.getItem("fishData");
@@ -286,7 +221,7 @@ function App() {
           }, 1000)　//自動削除後に復活までのニメーションの時間
 
 
-          // 復活したので、また30秒タイマー開始
+          // 復活したので、またタイマー開始
           startAutoHideTimer(index)
         }, 8000)　//自動消失後に復活するまでの時間
 
@@ -321,7 +256,7 @@ function App() {
       return
     }
     const fish = tankFish[index]
-    // 自動消滅の30秒タイマーをキャンセル
+    // 自動消滅のタイマーをキャンセル
     clearTimeout(autoHideTimers.current[index])
     
     // 履歴に追加
@@ -347,7 +282,7 @@ function App() {
     // 図鑑に追加
     setFishCollection({
       ...fishCollection,
-      [fish]: (fishCollection[fish] || 0) + 1
+      [fish.name]: (fishCollection[fish.name] || 0) + 1
     })
 
     // クリックアニメーション開始
@@ -408,13 +343,55 @@ function App() {
     }, 1000) //クリックアニメーションの時間
     
   }
+  // 時間実装
+  const [currentTime, setCurrentTime] = useState(new Date());
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, []);
+
+  const hour = currentTime.getHours();
+  const minutes = currentTime.getMinutes();
+
+  let timeZone = "";
+
+  if (hour >= 6 && hour < 10) {
+    timeZone = "morning";
+  } else if (hour >= 10 && hour < 18) {
+    timeZone = "day";
+    // if(minutes >= 0 && minutes < 34){
+    //   timeZone = "day";
+    // }else{
+    //   timeZone = "evening";
+    // }
+
+  } else if (hour >= 18 && hour < 20) {
+    timeZone = "evening";
+  } else {
+    timeZone = "night";
+  }
+
 
   return (
     <>
       <section>
         {/* header */}
         <div className="header">
+
+
           <h1 className="header_title">ふしぎな水槽</h1>
+          <div className="header_title">
+            {/* 時間表示 */}
+            {currentTime.toLocaleTimeString("ja-JP", {
+              hour: "2-digit",
+              minute: "2-digit",
+              // second: "2-digit",
+            })}
+          </div>
           <div className="header_Explanation">
             <button className="header_Explanation_title"
             onClick={() => setIsExplanationOpen(!isExplanationOpen)}
@@ -425,7 +402,11 @@ function App() {
             >
               <div className="Explanation">
                 <p className="Explanation_caption">本作品は主にAPI通信とアニメーションの技術力向上と画面設計・制作作業力の習得のために作成したポートフォリオゲームです。</p>
-                <p>魚をクリック（タップ）すると捕まえることができます。<br />右下の図鑑アイコンで、捕まえた魚の情報と入手個数を確認できます。入手個数が一定数（１０個など）を超えると、図鑑内テキストに王冠マークがつきます。<br />捕まえた魚は消失しますが、少し待つと復活します。</p>
+                <ul className="Explanation_list">
+                  <li>魚をクリック（タップ）すると捕まえることができます。</li>
+                  <li>右下の図鑑アイコンで、捕まえた魚の情報と入手個数を確認できます。入手個数が一定数（１０個など）を超えると、図鑑内テキストに王冠マークがつきます。</li>
+                  <li>捕まえた魚は消失しますが、少し待つと復活します。</li>   
+                </ul>
                 <p className="Explanation_title">実装スキル</p>
                 <ul className="Explanation_list">
                   <li>API通信</ li>
@@ -548,9 +529,9 @@ function App() {
                     <div className="seaweed-2"></div>
                     <div className="seaweed-1"></div>
                     <div className="seaweed-3"></div>
-                    <div className="monitor_bg_gradation3"></div>
-                    <div className="monitor_bg_gradation2"></div>
-                    <div className="monitor_bg_gradation"></div>
+                    <div className="monitor_bg_gradation3" data-time={timeZone} ></div>
+                    <div className="monitor_bg_gradation2" data-time={timeZone} ></div>
+                    <div className="monitor_bg_gradation" data-time={timeZone} ></div>
                   </div>
                 </div>
               </section>
@@ -573,67 +554,13 @@ function App() {
             </div>
           </div>
           {/* 図鑑 */}
-          <section>
-            <div className="menu">
-              <button className="menu_btn"
-              onClick={() => setIsBookOpen(!isBookOpen)}
-              ></button>
-              <div className=
-              {isBookOpen ? ('menu_feald active'):('menu_feald')}
-              onClick={() => setIsBookOpen(!isBookOpen)}
-              >
-                <div className="menuFeald" onClick={(e) => e.stopPropagation()}>
-                  <p className="menuFeald_title">Encyclopedia</p>
-                  <ul className="menuFeald_list">
-                      {fishData.map((fish, index) =>
-                        fishCollection[fish] >= 1 ? (
-                          <li key={fish.name}><button
-                          onClick={() => {
-                            setBookPage(index)
-                          }}
-                          className={index === bookPage ? "active" : ""}
-                          >
-                            <img src={fish.icon} alt={fish.name} />
-                            </button></li>
-                        ):(
-                          <li key={fish.name}><div><img src={no_icon} alt="" /></div></li>
-                        )
-                      )}
-                  </ul>
-                  <div className="menuFeald_note">
-                    <div className="menuFeald_note_img">
-                      <img 
-                        src={fishData[bookPage]?.image || no_image}
-                        alt={bookPage === null ? "---" : fishData[bookPage].name} />
-                        <p>※画像の読み込みに数秒ほど時間がかかる場合がございます。</p>
-                    </div>
-                    <ul className="menuFeald_note_list">
-                      <li><h2>名前：{fishData[bookPage]?.name || "---"}</h2></li>
-                      <li>学名：{fishData[bookPage]?.scientificName || "---"}</li>
-                      <li className="menuFeald_note_list_family"><p>分類：</p>
-                      <div>
-                        <p>界：{fishData[bookPage]?.classification?.phylum || "---"}</p>
-                        <p>目：{fishData[bookPage]?.classification?.order || "---"}</p>
-                        <p>科：{fishData[bookPage]?.classification?.family || "---"}</p>
-                      </div>
-                        </li>
-                      <li>生息地：{fishData[bookPage]?.habitat || "---"}</li>
-                      <li>入手数：
-                        {bookPage === null ? "---" : fishCollection[fishData[bookPage].name] || 0}匹
-                        <div
-                          className={
-                            bookPage === null ? "---" :
-                            fishCollection[fishData[bookPage].name]  >= 100 ? 'count-100' :
-                            fishCollection[fishData[bookPage].name]  >= 10 ? 'count-10' : ''
-                          }
-                        ></div>
-                        </li>
-                    </ul>
-                  </div>                    
-                </div>
-              </div>
-            </div>
-          </section>
+          <Encyclopedia
+            fishData={fishData}
+            fishCollection={fishCollection}
+            bookPage={bookPage}
+            setBookPage={setBookPage}
+          />
+
         </main>
       </section>
     </>

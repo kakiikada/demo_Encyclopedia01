@@ -2,19 +2,16 @@
 :root {
   --color_text: #333;
   --color_bg: #fff;
-  --color_base: #a6c1d3;
-  --color_main: #aa3bff;
-  --color_accent: #3b3eff;
-  --color_border: #e5e4e7;
-  --shadow: rgba(0, 0, 0, 0.1) 0 10px 15px -3px;
+  --color_base: #edeee6;  /*紙の色 */
+  --color_main: #48497f;
+  --shadow: 0.125rem 0.125rem 0.25rem 0 rgba(70, 54, 43, 0.5);
 
   --inner_m: 0.5rem;
   --inner_s: 0.25rem;
 
   --font-family-main: "Klee One", cursive;
-  --font-family-title: "Caveat", cursive;
-
-  --shadow: 0.125rem 0.125rem 0.25rem 0 rgba(70, 54, 43, 0.5);
+  /* --font-family-title: "Caveat", cursive; */
+  
   color: var(--color_text);
   background-color: var(--color_bg);
   -moz-osx-font-smoothing: grayscale;
