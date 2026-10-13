@@ -251,11 +251,13 @@
     }
   }
   .menuFeald {
+    overflow-y: auto;
     position: absolute;
     right: 0;
     top: 0;
     bottom: 0;
     width: 30rem;
+    max-height: 100svh;
     max-width: 100%;
     background-color: #b67c55;
     border-left: 0.25rem solid #c7b6aa;
