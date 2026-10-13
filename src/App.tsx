@@ -405,15 +405,16 @@ function App() {
           <div className="header_Explanation">
             <button className="header_Explanation_title"
             onClick={() => setIsExplanationOpen(!isExplanationOpen)}
-            >ポートフォリオ解説</button>
+            >水槽ガイド</button>
             {/* 説明 */}
             <div className=
             {isExplanationOpen ? ('header_Explanation_content active'):('header_Explanation_content')}
             >
               <div className="Explanation">
-                <p className="Explanation_caption">本作品は主にAPI通信とアニメーションの技術力向上と画面設計・制作作業力の習得のために作成したポートフォリオゲームです。</p>
+                <p className="Explanation_caption">本作品は主にAPI通信とアニメーションの技術力向上、画面設計・制作作業力の習得のために作成したポートフォリオゲームです。</p>
+                <p className="Explanation_title">遊び方</p>
                 <ul className="Explanation_list">
-                  <li>魚をクリック（タップ）すると捕まえることができます。（クリックの際、簡易エフェクトが表示されます）</li>
+                  <li>魚をクリック（タップ）すると捕まえることができます。</li>
                   <li>右下の図鑑アイコンで、捕まえた魚の情報と入手個数を確認できます。入手個数が一定数（１０個など）を超えると、図鑑内テキストに王冠マークがつきます。</li>
                   <li>捕まえた魚は消失しますが、少し待つと復活します。</li>
                   <li>現在時間が「6時」「10時」「18時」「20時」のタイミングで背景色が変化します。</li>

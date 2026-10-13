@@ -26,11 +26,12 @@
     .header_Explanation_title {
       z-index: 10;
       position: relative;
+      border-radius: 0 0 0 0.5rem;
       font-weight: bold;
       color: var(--color_bg);
-      padding: var(--inner_m);
-      padding-bottom: 1rem;
-      background-color: #0f105533;
+      padding: 0.5rem 1rem 0.75rem;
+      background-color: var(--color_accent);
+      
     }
     .header_Explanation_content {
       z-index: 8;
@@ -41,7 +42,7 @@
       left: 0;
       right: 0;
       transition: .5s;
-      padding-top: 2rem;
+      padding-top: 2.5rem;
       &.active {
         transform:translateX(0);
       }
@@ -67,15 +68,18 @@
     padding-bottom: 2rem;
     max-width: 1600px;
     margin: 0 auto;
+    font-size: 0.75rem;
+    @media screen and (min-width: 767px) {
+      font-size: 1rem;
+    }
     .Explanation_caption {}
     .Explanation_title {
-      margin-top: 2rem;
+      margin-top: 1rem;
     }
     .Explanation_list {
-      margin-top: 1rem;
+      margin-top: 0.5rem;
       list-style: disc;
       padding-left: 2rem;
-      padding-bottom: 1rem;
       li {
         & + & {
           margin-top: 0.5rem;
@@ -83,6 +87,7 @@
       }
     }
     .Explanation_clear {
+      margin-top: 1rem;
       padding: var(--inner_m);
       border-radius: .25rem;
       color: var(--color_bg);
