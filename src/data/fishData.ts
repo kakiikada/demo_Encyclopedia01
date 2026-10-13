@@ -17,6 +17,7 @@ export type Fish = {
   image: string
   illust: string
   icon: string
+  probability: number
 
   // APIから取得した分類情報
   classification?: {
@@ -63,9 +64,11 @@ export const initialFishData: Fish[] = [
     illust: fish03,
     icon: fish_icon03,
     probability: 13,
-        phylum: "",
-        order: "",
-        family: "",
+    classification: {
+        phylum: "...",
+        order: "...",
+        family: "..."
+    }
 },
 {
     name: "ハリセンボン",

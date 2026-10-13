@@ -1,22 +1,17 @@
 import { useState, useEffect, useRef } from 'react'
 
 import { initialFishData } from "./data/fishData"
+import type { Fish } from "./data/fishData";
 import Encyclopedia from "./components/Encyclopedia"
-
-import no_image from "./assets/no_image.png"
-import no_icon from "./assets/no_icon.png"
-import fish_demo from "./assets/fish_demo.png"
 
 
 import './styles/App.css'
 
 function App() {
-  const [count, setCount] = useState(0)
   // メニュー開閉
   const [isExplanationOpen, setIsExplanationOpen] = useState(false)
-  const [isBookOpen, setIsBookOpen] = useState(false)
   // 魚のクリック処理
-  const [fishHistory, setFishHistory] = useState<string[]>([]) //履歴
+  const [fishHistory, setFishHistory] = useState<Fish[]>([]) //履歴
   const [historyLeaving, setHistoryLeaving] = useState(false) //履歴アニメーション
 
   const [fishCollection, setFishCollection] = //図鑑
@@ -35,11 +30,7 @@ function App() {
     )
   }, [fishCollection])
 
-  // const fishList = ["カクレクマノミ", "ベタ", "エンゼルフィッシュ", "ハリセンボン", "ニシキテグリ"]
-  // ランダムに５匹を選出
-// 
-  const [fishApiData, setFishApiData] = useState<any>(null);
-  const [fishOccurrenceData, setFishOccurrenceData] = useState<any>(null);
+  const [, setFishOccurrenceData] = useState<any>(null);
 
   // APIで魚のデータを取得
   useEffect(() => {
@@ -59,7 +50,6 @@ function App() {
     )
     .then((response) => response.json())
     .then((data) => {
-      setFishApiData(data);
       const classification = {
         phylum: data.phylum,
         order: data.order,
@@ -96,12 +86,10 @@ function App() {
       });
     });
   }, [bookPage]);
-  const imageData = fishOccurrenceData?.results?.find(
-    (item: any) => item.media?.[0]?.identifier
-  );
+
 
   // ローカルストレージ管理
-  const [fishData, setFishData] = useState(() => {
+  const [fishData, setFishData] = useState<Fish[]>(() => {
     const savedFishData = localStorage.getItem("fishData");
 
     if (savedFishData) {
@@ -143,7 +131,6 @@ function App() {
   }, [fishData]);
 
   // 標示管理
-  const timers = useRef<(number | undefined)[]>([])
   const autoHideTimers = useRef<number[]>([])
   const respawnTimers = useRef<number[]>([])
   //自動管理
@@ -397,7 +384,7 @@ function App() {
     localStorage.removeItem("fishCollection");
 
     // 画面上の図鑑データもリセットする
-    setFishCollection([]);
+    setFishCollection({});
   };
 
 
